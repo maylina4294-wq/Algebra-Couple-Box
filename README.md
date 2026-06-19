@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Couple Box - Magical Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fff1f2; /* Latar belakang pink susu super lembut */
+            background-image: radial-gradient(#fecdd3 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        /* Animasi Pop-In */
+        .shape-enter {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .bounce-hover:hover {
+            animation: bounce-small 0.5s infinite alternate;
+        }
+
+        @keyframes bounce-small {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+
+        /* Wadah Elemen Aljabar */
+        .shape-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 150px;
+            transition: all 0.3s ease;
+        }
+
+        /* Desain Permen Kotak (x) & Bulat (1) */
+        .var-x {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 0px rgba(0, 0, 0, 0.12), inset 0 3px 0px rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .const-c {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 0px rgba(0, 0, 0, 0.12), inset 0 3px 0px rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .var-x:hover, .const-c:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Skema Warna Aljabar */
+        .bg-pos { background-color: #10b981; border: 2.5px solid #047857; color: white; text-shadow: 1px 1px 0 #047857; } 
+        .bg-neg { background-color: #f43f5e; border: 2.5px solid #be123c; color: white; text-shadow: 1px 1px 0 #be123c; }
+        
+        .pending-ghost {
+            opacity: 0.6;
+            border-style: dashed !important;
+            animation: pulse-border 1s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.02); }
+        }
+
+        .frac-label {
+            position: absolute;
+            z-index: 10;
+            color: #1e293b;
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.9), -2px -2px 0px rgba(255,255,255,0.9);
+        }
+
+        /* Tombol Lucu */
+        .btn-cute {
+            transition: all 0.1s ease-in-out;
+            box-shadow: 0 5px 0px 0px rgba(0,0,0,0.1);
+        }
+        .btn-cute:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px 0px rgba(0,0,0,0.1);
+        }
+
+        .cursor-grab {
+            cursor: grab;
+        }
+        .cursor-grab:active {
+            cursor: grabbing;
+        }
+
+        /* Animasi Timbangan */
+        .scale-arm {
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: center center;
+        }
+        .scale-pan {
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 p-2 md:p-6 flex items-center justify-center">
+
+    <!-- 1. HALAMAN SELAMAT DATANG (WELCOME SCREEN) -->
+    <div id="welcome-screen" class="w-full max-w-xl bg-white/95 rounded-[2.5rem] shadow-2xl p-6 md:p-10 border-4 border-pink-200 text-center space-y-6 shape-enter relative overflow-hidden">
+        <div class="space-y-2">
+            <span class="text-6xl bounce-hover inline-block">🌸✨🎀</span>
+            <h1 class="text-3xl md:text-4xl font-black text-rose-500 tracking-wide">Selamat Datang di</h1>
+            <h2 class="text-2xl md:text-3xl font-black text-indigo-600 bg-indigo-50 py-2 rounded-2xl border-2 border-indigo-100">Algebra Couple Box</h2>
+            <p class="text-sm md:text-base font-bold text-rose-400">Media Pembelajaran Persamaan Linear Satu Variabel</p>
+        </div>
+
+        <div class="space-y-4 max-w-sm mx-auto">
+            <label for="username" class="block font-black text-slate-700 text-md">Yuk, Tuliskan Namamu di Sini! 👇</label>
+            <input type="text" id="username" class="w-full p-4 rounded-2xl border-4 border-pink-100 bg-pink-50/50 text-center text-lg font-black text-slate-700 focus:border-pink-300 focus:outline-none transition-all duration-200" placeholder="Namamu yang Hebat ✨">
+            <button onclick="startGame()" class="btn-cute w-full bg-pink-500 text-white font-black text-xl py-4 rounded-2xl border-b-8 border-pink-700 hover:bg-pink-400">
+                Mulai Petualangan! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. HALAMAN UTAMA PERMAINAN (MAIN GAME CARD) -->
+    <div id="main-game-container" class="hidden w-full max-w-5xl bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-pink-200 shape-enter">
+        
+        <!-- Header Ceria -->
+        <div class="bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 text-white p-6 text-center relative overflow-hidden">
+            <h1 class="text-3xl md:text-4xl font-black tracking-wide drop-shadow-md">🎀 Algebra Couple Box 🎀</h1>
+            <p class="text-pink-100 mt-2 text-sm md:text-md font-bold">Halo <span id="player-greeting" class="underline decoration-pink-300 font-extrabold">Sahabat</span>, yuk pecahkan PLSV dengan menyenangkan!</p>
+        </div>
+
+        <div class="p-4 md:p-8 space-y-8">
+
+            <!-- PANDUAN PENGGUNAAN -->
+            <div class="bg-amber-50 rounded-3xl p-6 border-4 border-amber-200 shadow-sm relative">
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-amber-400 text-amber-950 px-6 py-2 rounded-full font-black text-md md:text-lg shadow-md flex items-center gap-2 whitespace-nowrap">
+                    📖 Panduan Bermain Seru
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <div class="space-y-3 text-amber-900 font-semibold text-sm md:text-base">
+                        <p class="flex items-start gap-2"><span>1️⃣</span> <span><strong>Aturan Timbangan:</strong> Tarik benda dari <strong>Kotak Ajaib</strong> ke salah satu ruas. Timbangan otomatis akan miring!</span></p>
+                        <p class="flex items-start gap-2"><span>2️⃣</span> <span><strong>Harus Adil:</strong> Letakkan benda yang sama di ruas lainnya agar timbangan kembali seimbang.</span></p>
+                        <p class="flex items-start gap-2"><span>3️⃣</span> <span><strong>Peleburan Ajaib (Zero Pair):</strong> Di dalam satu ruas, benda positif (<span class="text-emerald-600 font-bold">Hijau</span>) dan negatif (<span class="text-rose-500 font-bold">Merah</span>) sejenis akan saling melebur!</span></p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 border-2 border-amber-200 flex flex-col items-center justify-center">
+                        <p class="text-center font-black text-rose-500 mb-2">🎯 Target Akhirmu:</p>
+                        <p class="text-center text-xs md:text-sm mb-3 text-slate-600">Sisakan tepat <strong>SATU kotak hijau (+x)</strong> sendirian di salah satu ruas!</p>
+                        <div class="flex items-center gap-3 bg-rose-50 px-4 py-2 rounded-xl border border-rose-100">
+                            <div class="var-x bg-pos w-8 h-8 text-sm">x</div>
+                            <span class="font-black text-xl text-rose-400">=</span>
+                            <div class="const-c bg-pos w-8 h-8 text-sm">1</div>
+                            <div class="const-c bg-pos w-8 h-8 text-sm">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL INPUT SOAL -->
+            <div class="bg-rose-50 rounded-3xl p-6 border-4 border-pink-200 shadow-sm relative">
+                 <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-pink-400 text-white px-6 py-2 rounded-full font-black text-md md:text-lg shadow-md flex items-center gap-2 whitespace-nowrap">
+                    ✍️ Masukkan soal disini
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mt-4">
+                    <!-- Custom Kiri -->
+                    <div class="flex items-center gap-2 bg-white p-3 rounded-2xl border-2 border-pink-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-pink-400 absolute -mt-12 ml-2">Ruas Kiri</span>
+                        <input type="number" id="custom-lx" class="w-14 p-1.5 rounded-xl bg-slate-50 border-2 border-pink-100 text-center font-black text-slate-700 focus:border-pink-400 outline-none" value="2">
+                        <span class="font-black text-pink-500 text-lg">x</span>
+                        <span class="font-black text-slate-300 mx-1">+</span>
+                        <input type="number" id="custom-lc" class="w-14 p-1.5 rounded-xl bg-slate-50 border-2 border-pink-100 text-center font-black text-slate-700 focus:border-pink-400 outline-none" value="3">
+                    </div>
+                    
+                    <span class="font-black text-2xl text-pink-300 bounce-hover">🐣 = 🐣</span>
+                    
+                    <!-- Custom Kanan -->
+                    <div class="flex items-center gap-2 bg-white p-3 rounded-2xl border-2 border-pink-200 shadow-sm">
+                         <span class="text-[10px] font-bold text-pink-400 absolute -mt-12 ml-2">Ruas Kanan</span>
+                        <input type="number" id="custom-rx" class="w-14 p-1.5 rounded-xl bg-slate-50 border-2 border-pink-100 text-center font-black text-slate-700 focus:border-pink-400 outline-none" value="1">
+                        <span class="font-black text-pink-500 text-lg">x</span>
+                        <span class="font-black text-slate-300 mx-1">+</span>
+                        <input type="number" id="custom-rc" class="w-14 p-1.5 rounded-xl bg-slate-50 border-2 border-pink-100 text-center font-black text-slate-700 focus:border-pink-400 outline-none" value="7">
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button onclick="loadCustomLevel()" class="btn-cute bg-pink-500 text-white px-8 py-3 rounded-full font-black text-md hover:bg-pink-400 border-b-4 border-pink-700">
+                        ✨ Terapkan & Mainkan Soal! ✨
+                    </button>
+                </div>
+            </div>
+
+            <!-- GARIS PEMISAH LUCU -->
+            <div class="flex justify-center items-center gap-4 text-pink-300 opacity-50">
+                <hr class="w-1/3 border-2 border-pink-200 border-dashed rounded-full">
+                <span class="text-2xl">🧸</span>
+                <hr class="w-1/3 border-2 border-pink-200 border-dashed rounded-full">
+            </div>
+
+            <!-- KOTAK AJAIB / PUSAT BAHAN -->
+            <div class="bg-indigo-50 rounded-3xl p-6 border-4 border-indigo-200 shadow-inner relative">
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-indigo-500 text-white px-6 py-2 rounded-full font-black text-md md:text-lg shadow-md flex items-center gap-2 whitespace-nowrap">
+                    📦 Kotak Ajaib (Pusat Bahan)
+                </div>
+                <p class="text-center text-indigo-700 text-xs md:text-sm font-bold mb-4 mt-2">tekan tombol L/R untuk membuat timbangan tetap seimbang</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- +X -->
+                    <div draggable="true" ondragstart="handleSourceDragStart(event, 'x', 1)" class="cursor-grab bg-white border-2 border-indigo-100 rounded-2xl p-3 flex flex-col items-center justify-between hover:shadow-md transition">
+                        <span class="text-xs font-black text-emerald-600 mb-2">Positif x</span>
+                        <div class="var-x bg-pos">x</div>
+                        <div class="flex gap-1 mt-3 w-full">
+                            <button onclick="sendFromSource('x', 1, 'left')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">👈 L</button>
+                            <button onclick="sendFromSource('x', 1, 'right')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">R 👉</button>
+                        </div>
+                    </div>
+                    <!-- -X -->
+                    <div draggable="true" ondragstart="handleSourceDragStart(event, 'x', -1)" class="cursor-grab bg-white border-2 border-indigo-100 rounded-2xl p-3 flex flex-col items-center justify-between hover:shadow-md transition">
+                        <span class="text-xs font-black text-rose-500 mb-2">Negatif x</span>
+                        <div class="var-x bg-neg">-x</div>
+                        <div class="flex gap-1 mt-3 w-full">
+                            <button onclick="sendFromSource('x', -1, 'left')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">👈 L</button>
+                            <button onclick="sendFromSource('x', -1, 'right')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">R 👉</button>
+                        </div>
+                    </div>
+                    <!-- +1 -->
+                    <div draggable="true" ondragstart="handleSourceDragStart(event, 'c', 1)" class="cursor-grab bg-white border-2 border-indigo-100 rounded-2xl p-3 flex flex-col items-center justify-between hover:shadow-md transition">
+                        <span class="text-xs font-black text-emerald-600 mb-2">Positif 1</span>
+                        <div class="const-c bg-pos">1</div>
+                        <div class="flex gap-1 mt-3 w-full">
+                            <button onclick="sendFromSource('c', 1, 'left')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">👈 L</button>
+                            <button onclick="sendFromSource('c', 1, 'right')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">R 👉</button>
+                        </div>
+                    </div>
+                    <!-- -1 -->
+                    <div draggable="true" ondragstart="handleSourceDragStart(event, 'c', -1)" class="cursor-grab bg-white border-2 border-indigo-100 rounded-2xl p-3 flex flex-col items-center justify-between hover:shadow-md transition">
+                        <span class="text-xs font-black text-rose-500 mb-2">Negatif 1</span>
+                        <div class="const-c bg-neg">-1</div>
+                        <div class="flex gap-1 mt-3 w-full">
+                            <button onclick="sendFromSource('c', -1, 'left')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">👈 L</button>
+                            <button onclick="sendFromSource('c', -1, 'right')" class="flex-1 text-[10px] bg-blue-500 text-white font-black py-1 px-1 rounded hover:bg-blue-600">R 👉</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-[11px] text-indigo-500 font-bold mt-2">💡 Tips Tablet/HP: Tekan tombol "👈 L" untuk kirim ke Kiri atau "R 👉" untuk kirim ke Kanan!</p>
+            </div>
+
+            <!-- VISUAL TIMBANGAN PERSAMAAN -->
+            <div id="game-board" class="scroll-mt-8 space-y-6">
+                <!-- Timbangan SVG Dinamis -->
+                <div class="flex flex-col items-center justify-center p-4 bg-rose-50/50 rounded-3xl border-2 border-pink-100">
+                    <span id="balance-status" class="bg-emerald-100 text-emerald-700 border-2 border-emerald-200 px-4 py-1.5 rounded-full font-black text-xs md:text-sm mb-4 transition duration-300">⚖️ KEDUA RUAS SEIMBANG</span>
+                    
+                    <svg width="220" height="110" viewBox="0 0 220 110" class="overflow-visible">
+                        <!-- Pilar Tengah -->
+                        <rect x="105" y="40" width="10" height="60" rx="3" fill="#94a3b8" />
+                        <polygon points="95,100 125,100 120,90 100,90" fill="#64748b" />
+                        <!-- Titik Pivot -->
+                        <circle cx="110" cy="40" r="6" fill="#475569" />
+                        
+                        <!-- Lengan Timbangan Utama (Berputar) -->
+                        <g id="scale-arm-group" class="scale-arm">
+                            <!-- Garis Lengan -->
+                            <line x1="30" y1="40" x2="190" y2="40" stroke="#64748b" stroke-width="6" stroke-linecap="round" />
+                            
+                            <!-- Dudukan Kiri -->
+                            <g id="pan-left-group" class="scale-pan">
+                                <line x1="30" y1="40" x2="30" y2="70" stroke="#94a3b8" stroke-width="2" />
+                                <path d="M 10,70 L 50,70 L 40,80 L 20,80 Z" fill="#f43f5e" opacity="0.8"/>
+                            </g>
+                            
+                            <!-- Dudukan Kanan -->
+                            <g id="pan-right-group" class="scale-pan">
+                                <line x1="190" y1="40" x2="190" y2="70" stroke="#94a3b8" stroke-width="2" />
+                                <path d="M 170,70 L 210,70 L 200,80 L 180,80 Z" fill="#f43f5e" opacity="0.8"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Arena Kotak Ruas Kiri & Kanan -->
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Ruas Kiri -->
+                    <div class="flex-1 bg-white border-4 border-blue-200 rounded-[2rem] p-6 relative shadow-md transition-colors duration-300" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDrop(event, 'left')">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-100 text-blue-700 font-black px-6 py-1 rounded-full border-2 border-blue-200 whitespace-nowrap text-xs md:text-sm">Ruas Kiri 👈</div>
+                        <div id="left-box" class="shape-container mt-4 min-h-[160px]"></div>
+                    </div>
+
+                    <!-- Pembatas Tanda Sama Dengan -->
+                    <div class="hidden md:flex flex-col justify-center items-center">
+                        <div class="font-black text-5xl text-pink-300">=</div>
+                    </div>
+
+                    <!-- Ruas Kanan -->
+                    <div class="flex-1 bg-white border-4 border-blue-200 rounded-[2rem] p-6 relative shadow-md transition-colors duration-300"
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDrop(event, 'right')">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-100 text-blue-700 font-black px-6 py-1 rounded-full border-2 border-blue-200 whitespace-nowrap text-xs md:text-sm">👉 Ruas Kanan</div>
+                        <div id="right-box" class="shape-container mt-4 min-h-[160px]"></div>
+                    </div>
+                </div>
+
+                <!-- DIBAWAH KOTAK RUAS: Papan Tulis Persamaan -->
+                <div class="bg-slate-800 rounded-3xl p-5 shadow-lg mx-auto max-w-2xl relative border-4 border-slate-700">
+                    <div class="text-center font-mono text-3xl md:text-4xl text-white tracking-widest font-black" id="equation-display">
+                        <!-- Equation will be injected here -->
+                    </div>
+                    <div class="absolute -top-4 -right-4 text-white font-black px-4 py-2 bg-pink-500 rounded-full shadow-md border-2 border-white transform rotate-6 text-xs md:text-sm animate-bounce" id="level-display">Level 1 ⭐</div>
+                </div>
+
+            </div>
+
+            <!-- OPERASI PEMBAGIAN & UNDO -->
+            <div id="controls" class="space-y-6">
+                
+                <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                    
+                    <!-- Mantra Pembagian -->
+                    <div class="flex-1 bg-purple-100 p-5 rounded-[2rem] border-4 border-purple-200 flex flex-col md:flex-row justify-center items-center gap-4 relative shadow-sm w-full">
+                        <span class="text-3xl absolute -left-2 -top-4 bounce-hover">🪄</span>
+                        <span class="font-black text-purple-700 text-md md:text-lg">Mantra Pembagian:</span>
+                        <div class="flex flex-wrap items-center justify-center gap-3 text-sm md:text-base">
+                            <span class="font-bold text-purple-600">Bagi KEDUA ruas dengan</span>
+                            <input type="number" id="divide-val" class="w-16 p-1.5 rounded-xl border-4 border-purple-300 text-center font-black text-lg text-purple-800 outline-none focus:border-purple-500" value="2">
+                            <button onclick="applyDivision()" class="btn-cute bg-purple-500 text-white px-6 py-1.5 rounded-xl font-black text-md hover:bg-purple-400 border-b-4 border-purple-700">
+                                Bagi! 🔪
+                            </button>
+                        </div>
+                        <span id="div-error" class="text-red-500 font-black absolute -bottom-6 bg-red-100 px-3 py-1 rounded-full text-xs hidden">Ups, tidak bisa dibagi 0! 🙈</span>
+                    </div>
+
+                    <!-- FITUR UNDO -->
+                    <div class="bg-rose-100 p-5 rounded-[2rem] border-4 border-rose-200 flex flex-col justify-center items-center gap-2 relative shadow-sm w-full md:w-auto">
+                        <span class="font-black text-rose-700 text-md md:text-lg">Langkah Salah?</span>
+                        <button id="undo-btn" onclick="triggerUndo()" class="btn-cute bg-rose-500 text-white px-6 py-2.5 rounded-2xl font-black text-md hover:bg-rose-400 border-b-4 border-rose-700 flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none" disabled>
+                            ↩️ Undo Langkah
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PANEL SUKSES (DENGAN 5 HATI & MOTIVASI CERIA) -->
+            <div id="success-panel" class="hidden text-center bg-emerald-50 p-8 rounded-[2.5rem] border-4 border-emerald-300 shadow-lg relative mt-8">
+                <div class="text-5xl mb-3 bounce-hover">🎉</div>
+                <!-- 5 Hati Apresiasi -->
+                <div id="hearts-container" class="text-3xl md:text-4xl mb-4 tracking-widest text-rose-500 animate-bounce">
+                    💖 💖 💖 💖 💖
+                </div>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800 mb-2">Hebat! Kamu Menang!</h2>
+                <!-- Kata Menyemangati Lucu -->
+                <p id="encouraging-words" class="text-pink-600 font-black text-md md:text-xl mb-4 bg-white/80 py-2 px-4 rounded-2xl border border-pink-100 inline-block"></p>
+                <p class="text-emerald-950 mb-6 text-sm md:text-lg font-bold">Kamu berhasil membuktikan bahwa nilai <span class="bg-white px-3 py-1 rounded-lg border-2 border-emerald-200 text-xl font-black" id="final-answer">x = ?</span></p>
+                <button onclick="nextLevel()" class="btn-cute bg-emerald-500 text-white px-8 py-3.5 rounded-full font-black text-lg hover:bg-emerald-400 border-b-4 border-emerald-700">
+                    Lanjut Level Berikutnya 🚀
+                </button>
+            </div>
+            
+            <!-- PANEL SELESAI SEMUA -->
+            <div id="game-over-panel" class="hidden text-center bg-amber-100 p-8 rounded-[2.5rem] border-4 border-amber-300 shadow-lg relative mt-8">
+                 <div class="text-6xl mb-4 bounce-hover">🏆</div>
+                 <h2 class="text-3xl font-black text-amber-700 mb-2">Petualangan Selesai!</h2>
+                 <p class="text-amber-800 mb-6 text-md md:text-lg font-bold">Semua tantangan aljabar berhasil kamu taklukkan dengan sempurna!</p>
+                 <button onclick="resetGame()" class="btn-cute bg-amber-500 text-white px-8 py-4 rounded-full font-black text-xl hover:bg-amber-400 border-b-4 border-amber-700">
+                     Main Ulang dari Level 1 🔁
+                 </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL POPUP CUTE ALERT CUSTOM (Menghindari Penggunaan alert()) -->
+    <div id="cute-alert" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 hidden backdrop-blur-xs p-4">
+        <div class="bg-white border-4 border-pink-200 rounded-[2rem] max-w-sm w-full p-6 text-center space-y-4 shadow-2xl shape-enter">
+            <div class="text-4xl">💡</div>
+            <h3 id="cute-alert-title" class="text-xl font-black text-rose-500">Pemberitahuan Penting</h3>
+            <p id="cute-alert-message" class="text-sm text-slate-600 font-bold leading-relaxed"></p>
+            <button onclick="hideCuteAlert()" class="btn-cute w-full bg-pink-500 text-white font-black text-sm py-2.5 rounded-xl border-b-4 border-pink-700 hover:bg-pink-400">
+                Oke, Aku Mengerti! 🌸
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Data Level Permainan Bawaan
+        const levels = [
+            { left: { x: 2, c: 3 }, right: { x: 1, c: 7 } },   // 2x + 3 = x + 7
+            { left: { x: 3, c: 1 }, right: { x: 1, c: 5 } },   // 3x + 1 = x + 5
+            { left: { x: 2, c: 4 }, right: { x: 0, c: 10 } },  // 2x + 4 = 10 (Perlu pembagian)
+            { left: { x: 4, c: -3 }, right: { x: 1, c: 2 } },  // 4x - 3 = x + 2
+            { left: { x: 1, c: 5 }, right: { x: 3, c: -2 } }   // x + 5 = 3x - 2
+        ];
+
+        let currentLevelIndex = 0;
+        let currentState = { left: { x: 0, c: 0 }, right: { x: 0, c: 0 } };
+        let isCustomLevel = false;
+        let studentName = "Sahabat";
+
+        // Status pending action untuk menjaga aturan "Keadilan Aljabar"
+        let pendingAction = null;
+
+        // FITUR UNDO: Stack history untuk menyimpan langkah demi langkah
+        let stateHistory = [];
+
+        // Elemen DOM
+        const leftBox = document.getElementById('left-box');
+        const rightBox = document.getElementById('right-box');
+        const eqDisplay = document.getElementById('equation-display');
+        const levelDisplay = document.getElementById('level-display');
+        const controls = document.getElementById('controls');
+        const successPanel = document.getElementById('success-panel');
+        const gameOverPanel = document.getElementById('game-over-panel');
+        const finalAnswer = document.getElementById('final-answer');
+        const divError = document.getElementById('div-error');
+        const balanceStatus = document.getElementById('balance-status');
+        const armGroup = document.getElementById('scale-arm-group');
+        const panLeft = document.getElementById('pan-left-group');
+        const panRight = document.getElementById('pan-right-group');
+        const undoBtn = document.getElementById('undo-btn');
+
+        // Kata-kata Motivasi Lucu & Ceria setelah Berhasil
+        const encouragingPhrases = [
+            "Kamu luar biasa! Matematika jadi gampang banget di tanganmu! ✨🌸",
+            "Wow! Logikamu sekuat pahlawan super! Keren sekali! 🧸🎀",
+            "Hebat banget! Langkahmu sangat rapi dan logis! ❤️👑",
+            "Hore! Aljabar berhasil kamu taklukkan dengan penuh gaya! 🌈🚀",
+            "Super cerdas! Kamu mengerti konsep keseimbangan dengan sangat cepat! 🥳✨"
+        ];
+
+        // Custom Cute Alert
+        function showCuteAlert(title, message) {
+            document.getElementById('cute-alert-title').innerHTML = title;
+            document.getElementById('cute-alert-message').innerHTML = message;
+            document.getElementById('cute-alert').classList.remove('hidden');
+        }
+
+        function hideCuteAlert() {
+            document.getElementById('cute-alert').classList.add('hidden');
+        }
+
+        // Jalankan transisi Welcome Screen ke Game Main
+        function startGame() {
+            const nameInput = document.getElementById('username').value.trim();
+            if (nameInput) {
+                studentName = nameInput;
+            }
+            document.getElementById('player-greeting').textContent = studentName;
+            
+            // Sembunyikan Welcome Screen, tampilkan Main Game
+            document.getElementById('welcome-screen').classList.add('hidden');
+            const mainContainer = document.getElementById('main-game-container');
+            mainContainer.classList.remove('hidden');
+            
+            // Set penengah ke body agar tidak terpusat vertikal jika konten memanjang
+            document.body.classList.remove('flex', 'items-center', 'justify-center');
+            document.body.classList.add('block');
+
+            loadLevel(currentLevelIndex);
+        }
+
+        // Fungsi Simpan State ke dalam History (untuk fitur Undo)
+        function saveToHistory() {
+            const stateClone = JSON.parse(JSON.stringify(currentState));
+            const pendingClone = pendingAction ? JSON.parse(JSON.stringify(pendingAction)) : null;
+            stateHistory.push({
+                state: stateClone,
+                pending: pendingClone
+            });
+            updateUndoButtonState();
+        }
+
+        // Fungsi Membatalkan/Kembalikan Langkah (Undo)
+        function triggerUndo() {
+            if (stateHistory.length > 0) {
+                const previous = stateHistory.pop();
+                currentState = previous.state;
+                pendingAction = previous.pending;
+                
+                updateUI();
+                updateUndoButtonState();
+            }
+        }
+
+        function updateUndoButtonState() {
+            undoBtn.disabled = stateHistory.length === 0;
+        }
+
+        // Konversi desimal ke format pecahan murni
+        function decimalToFraction(decimal) {
+            if (Math.abs(Math.round(decimal) - decimal) < 0.001) return Math.round(decimal).toString();
+            let tolerance = 1.0E-6;
+            let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+            let b = Math.abs(decimal);
+            do {
+                let a = Math.floor(b);
+                let aux = h1; h1 = a * h1 + h2; h2 = aux;
+                aux = k1; k1 = a * k1 + k2; k2 = aux;
+                b = 1 / (b - a);
+            } while (Math.abs(Math.abs(decimal) - h1 / k1) > Math.abs(decimal) * tolerance);
+            let sign = decimal < 0 ? "-" : "";
+            return `${sign}${h1}/${k1}`;
+        }
+
+        // Format visual teks persamaan matematika
+        function formatSide(state, sideName) {
+            let xVal = state.x;
+            let cVal = state.c;
+
+            if (pendingAction && pendingAction.source === sideName) {
+                if (pendingAction.type === 'x') xVal += pendingAction.value;
+                if (pendingAction.type === 'c') cVal += pendingAction.value;
+            }
+
+            if (Math.abs(xVal) < 0.001 && Math.abs(cVal) < 0.001) return '0';
+            
+            let parts = [];
+            if (Math.abs(xVal) >= 0.001) {
+                if (Math.abs(xVal - 1) < 0.001) parts.push('x');
+                else if (Math.abs(xVal + 1) < 0.001) parts.push('-x');
+                else parts.push(`${decimalToFraction(xVal)}x`);
+            }
+            if (Math.abs(cVal) >= 0.001) {
+                if (parts.length > 0) {
+                    parts.push(cVal > 0 ? `+ ${decimalToFraction(cVal)}` : `- ${decimalToFraction(Math.abs(cVal))}`);
+                } else {
+                    parts.push(`${decimalToFraction(cVal)}`);
+                }
+            }
+            return parts.join(' ');
+        }
+
+        function updateEquationDisplay() {
+            const leftStr = formatSide(currentState.left, 'left');
+            const rightStr = formatSide(currentState.right, 'right');
+            eqDisplay.innerHTML = `${leftStr} <span class="text-pink-400 mx-2">=</span> ${rightStr}`;
+        }
+
+        // Render elemen visual (Kotak / Bulat)
+        function renderItems(value, type, container, sideName) {
+            if (Math.abs(value) < 0.001) return;
+            
+            const isPos = value > 0;
+            const absVal = Math.abs(value);
+            const intPart = Math.floor(absVal + 0.001); 
+            const fracPart = absVal - intPart;
+
+            const baseClass = type === 'x' ? 'var-x' : 'const-c';
+            const borderColor = isPos ? '#047857' : '#be123c';
+            const fillColor = isPos ? '#10b981' : '#f43f5e';
+            const labelFull = type === 'x' ? (isPos ? 'x' : '-x') : (isPos ? '1' : '-1');
+
+            // Elemen Utuh
+            for (let i = 0; i < intPart; i++) {
+                const el = document.createElement('div');
+                el.className = `${baseClass} ${isPos ? 'bg-pos' : 'bg-neg'} shape-enter`;
+                el.textContent = labelFull;
+                container.appendChild(el);
+            }
+
+            // Elemen Pecahan
+            if (fracPart > 0.001) {
+                const el = document.createElement('div');
+                const fillPercent = (fracPart * 100).toFixed(1);
+                el.className = `${baseClass} shape-enter`;
+                el.style.border = `2.5px solid ${borderColor}`;
+                
+                if (type === 'c') {
+                    el.style.background = `conic-gradient(${fillColor} ${fillPercent}%, transparent 0)`;
+                } else {
+                    el.style.background = `linear-gradient(to top, ${fillColor} ${fillPercent}%, transparent 0)`;
+                }
+                
+                const span = document.createElement('span');
+                span.className = 'frac-label';
+                span.textContent = decimalToFraction(fracPart * (isPos ? 1 : -1)); 
+                el.appendChild(span);
+                container.appendChild(el);
+            }
+        }
+
+        // Mengatur visual timbangan keseimbangan
+        function updateScaleVisualization() {
+            if (pendingAction === null) {
+                // Seimbang
+                balanceStatus.textContent = "⚖️ KEDUA RUAS SEIMBANG";
+                balanceStatus.className = "bg-emerald-100 text-emerald-700 border-2 border-emerald-200 px-4 py-1.5 rounded-full font-black text-xs md:text-sm mb-4 transition duration-300";
+                
+                // Setel kemiringan lengan ke 0 derajat
+                armGroup.style.transform = "rotate(0deg)";
+                panLeft.style.transform = "translate(0px, 0px)";
+                panRight.style.transform = "translate(0px, 0px)";
+            } else {
+                // Tidak Seimbang
+                const side = pendingAction.source;
+                const itemLabel = pendingAction.type === 'x' ? 'x' : '1';
+                const signLabel = pendingAction.value > 0 ? '+' : '-';
+                const otherSide = side === 'left' ? 'Kanan' : 'Kiri';
+                
+                balanceStatus.textContent = `⚠️ TIDAK SEIMBANG! Tambahkan [${signLabel}${itemLabel}] ke Ruas ${otherSide}!`;
+                balanceStatus.className = "bg-rose-100 text-rose-700 border-2 border-rose-200 px-4 py-1.5 rounded-full font-black text-sm mb-4 animate-pulse";
+                
+                if (side === 'left') {
+                    // Miring ke Kiri (Sisi Kiri turun, Sisi Kanan naik)
+                    armGroup.style.transform = "rotate(8deg)";
+                    panLeft.style.transform = "translate(0px, -5px)";
+                    panRight.style.transform = "translate(0px, 5px)";
+                } else {
+                    // Miring ke Kanan (Sisi Kanan turun, Sisi Kiri naik)
+                    armGroup.style.transform = "rotate(-8deg)";
+                    panLeft.style.transform = "translate(0px, 5px)";
+                    panRight.style.transform = "translate(0px, -5px)";
+                }
+            }
+        }
+
+        // Render keseluruhan UI
+        function updateUI() {
+            leftBox.innerHTML = '';
+            rightBox.innerHTML = '';
+            
+            // 1. Render data riil saat ini
+            renderItems(currentState.left.x, 'x', leftBox, 'left');
+            renderItems(currentState.left.c, 'c', leftBox, 'left');
+            renderItems(currentState.right.x, 'x', rightBox, 'right');
+            renderItems(currentState.right.c, 'c', rightBox, 'right');
+            
+            // 2. Jika ada pending action, render "bayangan" di ruas tujuan awal
+            if (pendingAction) {
+                const targetContainer = pendingAction.source === 'left' ? leftBox : rightBox;
+                const ghostEl = document.createElement('div');
+                const isPos = pendingAction.value > 0;
+                const baseClass = pendingAction.type === 'x' ? 'var-x' : 'const-c';
+                const label = pendingAction.type === 'x' ? (isPos ? 'x' : '-x') : (isPos ? '1' : '-1');
+                
+                ghostEl.className = `${baseClass} ${isPos ? 'bg-pos' : 'bg-neg'} pending-ghost`;
+                ghostEl.textContent = label;
+                targetContainer.appendChild(ghostEl);
+
+                // Di ruas seberangnya, render placeholder berkedip untuk menuntun siswa
+                const receiverContainer = pendingAction.source === 'left' ? rightBox : leftBox;
+                const placeholder = document.createElement('div');
+                placeholder.className = `${baseClass} border-4 border-dashed border-indigo-400 bg-indigo-50/50 flex items-center justify-center text-xs text-indigo-500 font-bold animate-pulse`;
+                placeholder.textContent = "?";
+                placeholder.style.width = "44px";
+                placeholder.style.height = "44px";
+                if (pendingAction.type === 'c') placeholder.style.borderRadius = "50%";
+                else placeholder.style.borderRadius = "12px";
+                receiverContainer.appendChild(placeholder);
+            }
+            
+            updateScaleVisualization();
+            updateEquationDisplay();
+            checkWinCondition();
+        }
+
+        // DRAG AND DROP DARI KOTAK AJAIB (PUSAT)
+        function handleSourceDragStart(e, type, value) {
+            e.dataTransfer.setData('type', type);
+            e.dataTransfer.setData('val', value.toString());
+            e.dataTransfer.setData('fromSource', 'true');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('bg-indigo-50', 'border-dashed');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('bg-indigo-50', 'border-dashed');
+        }
+
+        function handleDrop(e, destSide) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('bg-indigo-50', 'border-dashed');
+            
+            const type = e.dataTransfer.getData('type');
+            const value = parseFloat(e.dataTransfer.getData('val'));
+            const fromSource = e.dataTransfer.getData('fromSource');
+
+            if (fromSource === 'true' && !isNaN(value)) {
+                processInput(type, value, destSide);
+            }
+        }
+
+        // PENGIRIMAN VIA KLIK TOMBOL (FALLBACK HP/TABLET)
+        function sendFromSource(type, value, destSide) {
+            processInput(type, value, destSide);
+        }
+
+        // PROSES LOGIKA INPUT ALJEBAR
+        function processInput(type, value, destSide) {
+            // Sebelum mengubah keadaan permainan, simpan state sebelumnya ke history untuk fitur Undo
+            saveToHistory();
+
+            if (pendingAction === null) {
+                // Langkah Pertama: Mulai proses penyeimbangan
+                pendingAction = { type, value, source: destSide };
+                updateUI();
+            } else {
+                // Langkah Kedua: Verifikasi keadilan aljabar
+                if (pendingAction.type === type && pendingAction.value === value && pendingAction.source !== destSide) {
+                    // Berhasil Seimbang! Lakukan perubahan pada database real state
+                    currentState.left[type] += value;
+                    currentState.right[type] += value;
+
+                    // Mencegah nilai melampaui batas nol (zero-pair otomatis secara matematis)
+                    if (Math.abs(currentState.left[type]) < 0.001) currentState.left[type] = 0;
+                    if (Math.abs(currentState.right[type]) < 0.001) currentState.right[type] = 0;
+
+                    // Bersihkan pending action & kembalikan keseimbangan timbangan
+                    pendingAction = null;
+                    updateUI();
+                } else {
+                    // Salah input benda pembanding, batalkan penyimpanan sejarah terakhir agar tidak dobel
+                    stateHistory.pop();
+                    updateUndoButtonState();
+
+                    const otherSide = pendingAction.source === 'left' ? 'Kanan' : 'Kiri';
+                    const signLabel = pendingAction.value > 0 ? '+' : '-';
+                    const itemLabel = pendingAction.type === 'x' ? 'x' : '1';
+                    
+                    showCuteAlert(
+                        "⚠️ Keadilan Aljabar!",
+                        `Halo <b>${studentName}</b>, kedua ruas timbangan harus diperlakukan secara ADIL!<br><br>Letakkan benda yang sama <b>[ ${signLabel}${itemLabel} ]</b> di Ruas <b>${otherSide}</b> juga ya!`
+                    );
+                }
+            }
+        }
+
+        // MANTRA PEMBAGIAN (MEMBAGI KEDUA RUAS)
+        function applyDivision() {
+            if (pendingAction !== null) {
+                showCuteAlert("🪄 Mantra Pembagian", `Selesaikan penyeimbangan timbanganmu terlebih dahulu sebelum merapal mantra pembagian, <b>${studentName}</b>!`);
+                return;
+            }
+            
+            const valStr = document.getElementById('divide-val').value;
+            const val = parseFloat(valStr);
+            if (isNaN(val) || Math.abs(val) < 0.001) {
+                divError.classList.remove('hidden');
+                setTimeout(() => divError.classList.add('hidden'), 2000);
+                return;
+            }
+            
+            // Simpan riwayat sebelum membagi
+            saveToHistory();
+
+            currentState.left.x /= val;  currentState.left.c /= val;
+            currentState.right.x /= val; currentState.right.c /= val;
+            
+            updateUI();
+        }
+
+        // CEK APAKAH SUDAH SELESAI (WIN CONDITION)
+        function checkWinCondition() {
+            const left = currentState.left;
+            const right = currentState.right;
+            
+            // Tidak boleh ada aksi tertunda
+            if (pendingAction !== null) return;
+
+            let won = false;
+            let answer = '';
+
+            // Syarat menang: menyisakan tepat 1x di satu sisi, dan konstanta di sisi lain
+            if (Math.abs(left.x - 1) < 0.001 && Math.abs(left.c) < 0.001 && Math.abs(right.x) < 0.001) {
+                won = true; answer = `x = ${decimalToFraction(right.c)}`;
+            } else if (Math.abs(right.x - 1) < 0.001 && Math.abs(right.c) < 0.001 && Math.abs(left.x) < 0.001) {
+                won = true; answer = `${decimalToFraction(left.c)} = x`;
+            }
+
+            if (won) {
+                // Pilih kata penyemangat acak
+                const randomPhrase = encouragingPhrases[Math.floor(Math.random() * encouragingPhrases.length)];
+                document.getElementById('encouraging-words').innerText = randomPhrase;
+
+                controls.classList.add('hidden');
+                successPanel.classList.remove('hidden');
+                finalAnswer.textContent = answer;
+                
+                // Scroll halus ke panel sukses
+                setTimeout(() => { successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+            }
+        }
+
+        // LOAD LEVEL BAWAAN
+        function loadLevel(index) {
+            isCustomLevel = false;
+            pendingAction = null;
+            stateHistory = []; // Bersihkan riwayat undo di level baru
+            updateUndoButtonState();
+
+            currentState = JSON.parse(JSON.stringify(levels[index]));
+            levelDisplay.textContent = `Level ${index + 1} ⭐`;
+            levelDisplay.classList.remove('bg-indigo-600');
+            levelDisplay.classList.add('bg-pink-500');
+            resetUIState();
+        }
+
+        // LOAD SOAL KUSTOM (GURU)
+        function loadCustomLevel() {
+            isCustomLevel = true;
+            pendingAction = null;
+            stateHistory = []; // Bersihkan riwayat undo
+            updateUndoButtonState();
+
+            const lx = parseFloat(document.getElementById('custom-lx').value) || 0;
+            const lc = parseFloat(document.getElementById('custom-lc').value) || 0;
+            const rx = parseFloat(document.getElementById('custom-rx').value) || 0;
+            const rc = parseFloat(document.getElementById('custom-rc').value) || 0;
+
+            currentState = { left: { x: lx, c: lc }, right: { x: rx, c: rc } };
+            levelDisplay.textContent = "Soal Kustom 🌟";
+            levelDisplay.classList.remove('bg-pink-500');
+            levelDisplay.classList.add('bg-indigo-600');
+            
+            resetUIState();
+            
+            // Scroll otomatis ke papan permainan
+            document.getElementById('game-board').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetUIState() {
+            controls.classList.remove('hidden');
+            successPanel.classList.add('hidden');
+            gameOverPanel.classList.add('hidden');
+            updateUI();
+        }
+
+        function nextLevel() {
+            if (isCustomLevel) {
+                // Jika sedang di soal kustom, arahkan kembali ke panel guru paling atas
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                resetGame();
+                return;
+            }
+            currentLevelIndex++;
+            if (currentLevelIndex < levels.length) {
+                loadLevel(currentLevelIndex);
+            } else {
+                successPanel.classList.add('hidden');
+                gameOverPanel.classList.remove('hidden');
+            }
+        }
+
+        function resetGame() {
+            currentLevelIndex = 0;
+            loadLevel(currentLevelIndex);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
